@@ -65,16 +65,17 @@ def cleanup(input_file):
 
 
 if __name__ == '__main__':
+    local_version = get_local_version(get_install_path())
+    print(f'Version locale : {local_version} \n')
+
+    print('Récupération des données de Elvui en cours...\n')
+
     elvui_rq = get_data_from_api(ELVUI_API_URL)
 
     elvui_version = elvui_rq["version"]
     elvui_url = elvui_rq["url"]
 
-    local_version = get_local_version(get_install_path())
-
-    print(f'ElvUI version : {elvui_version}')
-    print(f'Local version : {local_version}')
-
+    print(f'Version de ElvUI : {elvui_version}')
 
     if elvui_version > local_version:
         print("Mise à jour requise")
