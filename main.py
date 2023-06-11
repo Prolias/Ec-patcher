@@ -5,7 +5,7 @@ import zipfile as zipF
 import requests
 from tqdm import tqdm
 
-ELVUI_API_URL = "https://www.tukui.org/api.php?ui=elvui"
+ELVUI_API_URL = "https://api.tukui.org/v1/addon/elvui"
 
 def get_install_path():
     """Get installation path from install_path.ini"""
@@ -40,7 +40,8 @@ def update(download_url):
     downloaded = 0
     chunksize = 1024
     bars = total_size // chunksize
-    savefile = download_url.split("/")[-1]
+    # savefile = download_url.split("/")[-1]
+    savefile = f'v{elvui_version}.zip'
     with open(savefile, "wb") as file:
         for chunk in tqdm(res.iter_content(chunk_size=chunksize),
         total=bars, unit="kB", ncols=80, desc=savefile, leave=True):
@@ -65,24 +66,28 @@ def cleanup(input_file):
 
 
 if __name__ == '__main__':
-    local_version = get_local_version(get_install_path())
-    print(f'Version locale : {local_version} \n')
+    try:
+        local_version = get_local_version(get_install_path())
+        print(f'Version locale : {local_version} \n')
 
-    print('Récupération des données de Elvui en cours...\n')
+        print('Récupération des données de Elvui en cours...\n')
 
-    elvui_rq = get_data_from_api(ELVUI_API_URL)
+        elvui_rq = get_data_from_api(ELVUI_API_URL)
 
-    elvui_version = elvui_rq["version"]
-    elvui_url = elvui_rq["url"]
+        elvui_version = elvui_rq["version"]
+        elvui_url = elvui_rq["url"]
 
-    print(f'Version de ElvUI : {elvui_version}')
+        print(f'Version de ElvUI : {elvui_version}')
 
-    if elvui_version > local_version:
-        print("Mise à jour requise")
-        print("Téléchargement en cours : ")
-        upgrade(update(elvui_url))
+        if elvui_version > local_version:
+            print("Mise à jour requise")
+            print("Téléchargement en cours : ")
+            upgrade(update(elvui_url))
 
-    else:
-        print("A jour!")
-
-    input("Press any key to continue...")
+        else:
+            print("A jour!")
+    except Exception as e:
+        print("Problème à l'éxécution.")
+        print(e)
+    finally:
+        input("Press any key to continue...")
