@@ -4,6 +4,7 @@ import os
 import zipfile as zipF
 import requests
 from tqdm import tqdm
+from datetime import datetime
 
 ELVUI_API_URL = "https://api.tukui.org/v1/addon/elvui"
 
@@ -29,7 +30,7 @@ def get_local_version(url):
     with open(rf'{url}ElvUI\ElvUI_Mainline.toc', encoding="utf-8") as file:
         for line in file:
             if "version" in line.strip().lower():
-                local_ver = line.split(":",1)[1].strip()
+                local_ver = line.split("v",1)[1].strip()
 
     return local_ver
 
@@ -88,6 +89,10 @@ if __name__ == '__main__':
             print("A jour!")
     except Exception as e:
         print("Problème à l'éxécution.")
-        print(e)
+        fName = "Log_" + datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        with open(f"{fName}.txt", mode="w", encoding="utf-8") as f:
+            print(e)
+            f.write(str(e))
+            print("Fichier de log enregistré.")
     finally:
         input("Press any key to continue...")
